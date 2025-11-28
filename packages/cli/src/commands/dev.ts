@@ -11,9 +11,7 @@ import { checkHoloJson } from '../utilities/checkConfigFile';
 let currentProcess;
 
 export function configureDevCommand(program: Command) {
-  return commonOptions(
-    program.command('dev').description('run holo in local'),
-  )
+  return commonOptions(program.command('dev').description('run holo in local'))
     .version(getVersion(), '-v, --version', 'Display the version number')
     .action(async (options) => {
       checkHoloJson(); // Check for holo.json before proceeding
@@ -55,11 +53,8 @@ function watchFiles(currentProcess: any) {
 function runDev() {
   note(`Starting dev mode`);
   const cwd = process.cwd();
-  const holoPath = path.join(
-    process.env.HOME as string,
-    '.holo/apps/holo',
-  );
-  const env = { ...process.env, TRIGGER_CONFIG_PATH: cwd };
+  const holoPath = path.join(process.env.HOME as string, '.holo/apps/holo');
+  const env = { ...process.env, HOLO_CONFIG_PATH: cwd };
 
   // Execute pnpm dev command
   const child = execa('pnpm', ['dev'], {

@@ -1,4 +1,4 @@
-import { Loader as LoaderI } from 'lucide-react';
+import { LoaderCircle, Loader as LoaderI } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
@@ -39,7 +39,7 @@ const Loader = React.forwardRef<HTMLButtonElement, LoaderProps>(
           variant === 'horizontal' ? 'items-center gap-1' : 'flex-col gap-2',
         )}
       >
-        <LoaderI size={18} className="animate-spin" />
+        <LoaderCircle size={18} className="animate-spin" />
         {text && <p className="text-sm text-muted-foreground">{text}</p>}
       </div>
     );
