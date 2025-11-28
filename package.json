@@ -1,0 +1,22 @@
+{
+  "name": "holo",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "ui:add": "pnpm --filter @holo/ui ui:add"
+  },
+  "devDependencies": {
+    "@holo/eslint-config": "workspace:*",
+    "@holo/typescript-config": "workspace:*",
+    "prettier": "^3.3.2",
+    "turbo": "2.0.6"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
