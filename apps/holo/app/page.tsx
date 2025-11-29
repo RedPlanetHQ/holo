@@ -3,7 +3,7 @@
 import { HoloConfigContext } from '@/components/config-provider';
 import { HoloConfigType } from '@/components/type';
 import { Loader } from '@/components/ui/loader';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useContext } from 'react';
 

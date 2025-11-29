@@ -20,15 +20,12 @@ interface ComponentProps {
 export const customComponents = {
   // Allows customizing built-in components, e.g. to add styling.
   h1: (props: ComponentProps) => (
-    <h1 className="text-2xl font-bold" {...props} />
+    <h1 className="text-xl font-bold" {...props} />
   ),
-  h2: (props: ComponentProps) => <h2 className="text-xl" {...props} />,
-  h3: (props: ComponentProps) => <h3 className="text-lg" {...props} />,
+  h2: (props: ComponentProps) => <h2 className="text-lg" {...props} />,
+  h3: (props: ComponentProps) => <h3 className="text-md" {...props} />,
   a: (props: any) => (
-    <a
-      className="border-none bg-grayAlpha-200 hover:bg-grayAlpha-400 rounded p-1"
-      {...props}
-    />
+    <a className="border-none text-primary rounded" {...props} />
   ),
 
   table: (props: ComponentProps) => <Table {...props} />,

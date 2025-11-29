@@ -2,14 +2,13 @@ import { Command } from 'commander';
 import { commonOptions } from '../cli/common';
 import { getVersion } from '../utilities/getVersion';
 import { printInitialBanner } from '../utilities/initialBanner';
-import chokidar from 'chokidar';
 import { note, log } from '@clack/prompts';
 import { execa } from 'execa';
 import path from 'node:path';
 import cpy from 'cpy';
 import { checkHoloJson } from '../utilities/checkConfigFile';
-
-let currentProcess;
+import { checkEnvVariables, getRequiredEnvVars } from '../utilities/checkEnv';
+import { getHoloAppPath, ensureProjectSetup } from '../utilities/setupProject';
 
 export function configureBuildCommand(program: Command) {
   return commonOptions(
@@ -20,25 +19,17 @@ export function configureBuildCommand(program: Command) {
     .version(getVersion(), '-v, --version', 'Display the version number')
     .action(async (options) => {
       checkHoloJson(); // Check for holo.json before proceeding
+      checkEnvVariables(getRequiredEnvVars()); // Check for required .env variables
+      await ensureProjectSetup(); // Ensure project is set up before building
       await runBuild();
       await copyFiles();
     });
 }
 
-// Path to the .holo/apps/holo directory
-const holoPath = path.join(
-  process.env.HOME as string,
-  '.holo',
-  'apps',
-  'holo',
-);
-// Path to the dist directory
-const distPath = path.join(process.cwd(), 'dist');
-
-// Watch for file changes
 // Function to run the build command
 async function runBuild() {
   note(`Starting build`);
+  const holoPath = getHoloAppPath();
 
   try {
     await execa('pnpm', ['build'], {
@@ -55,6 +46,9 @@ async function runBuild() {
 
 // Function to copy files
 async function copyFiles() {
+  const holoPath = getHoloAppPath();
+  const distPath = path.join(process.cwd(), 'dist');
+
   try {
     // Create the dist directory if it doesn't exist
     await cpy(['.next/**', 'package.json'], distPath, { cwd: holoPath });

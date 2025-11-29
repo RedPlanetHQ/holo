@@ -8,12 +8,13 @@ export default defineConfig({
   dts: true,
   splitting: false,
   entry: ['src/index.ts'],
-  format: ['esm'],
+  format: ['cjs', 'esm'],
   minify: false,
   metafile: false,
   sourcemap: true,
   target: 'esnext',
   outDir: 'dist',
+  noExternal: ['ai-client'],
   async onSuccess() {
     if (isDev) {
       console.debug('Running onSuccess() in dev');

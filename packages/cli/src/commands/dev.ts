@@ -5,8 +5,9 @@ import { printInitialBanner } from '../utilities/initialBanner';
 import chokidar from 'chokidar';
 import { note, log } from '@clack/prompts';
 import { execa } from 'execa';
-import path from 'node:path';
 import { checkHoloJson } from '../utilities/checkConfigFile';
+import { checkEnvVariables, getRequiredEnvVars } from '../utilities/checkEnv';
+import { getHoloAppPath, ensureProjectSetup } from '../utilities/setupProject';
 
 let currentProcess;
 
@@ -15,7 +16,9 @@ export function configureDevCommand(program: Command) {
     .version(getVersion(), '-v, --version', 'Display the version number')
     .action(async (options) => {
       checkHoloJson(); // Check for holo.json before proceeding
+      checkEnvVariables(getRequiredEnvVars()); // Check for required .env variables
       await printInitialBanner(false);
+      await ensureProjectSetup(); // Ensure project is set up before running
       currentProcess = await runDev();
       watchFiles(currentProcess);
     });
@@ -53,7 +56,7 @@ function watchFiles(currentProcess: any) {
 function runDev() {
   note(`Starting dev mode`);
   const cwd = process.cwd();
-  const holoPath = path.join(process.env.HOME as string, '.holo/apps/holo');
+  const holoPath = getHoloAppPath();
   const env = { ...process.env, HOLO_CONFIG_PATH: cwd };
 
   // Execute pnpm dev command

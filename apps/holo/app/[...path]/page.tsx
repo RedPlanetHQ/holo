@@ -7,7 +7,7 @@ export default function AllRoutes() {
   const pathname = usePathname();
 
   return (
-    <div>
+    <div className="leading-6">
       <MDXContent fileName={`${pathname.slice(1)}.mdx`} />
     </div>
   );

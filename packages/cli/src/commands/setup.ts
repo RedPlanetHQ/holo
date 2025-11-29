@@ -1,4 +1,4 @@
-import { intro, note, outro, spinner } from '@clack/prompts';
+import { intro, outro } from '@clack/prompts';
 import { Command } from 'commander';
 import {
   CommonCommandOptions,
@@ -7,21 +7,26 @@ import {
 } from '../cli/common';
 import { getVersion } from '../utilities/getVersion';
 import { printInitialBanner } from '../utilities/initialBanner';
-import { execa } from 'execa';
-import fs from 'node:fs';
-import degit from 'degit';
-import path from 'node:path';
-import { checkHoloJson } from '../utilities/checkConfigFile';
+import {
+  loadExistingConfig,
+  promptCoreUrl,
+  promptCoreApiKey,
+  promptProviderModel,
+  promptProviderApiKey,
+  saveHoloConfig,
+  updateEnvFile,
+  PROVIDER_TEMPLATES,
+} from '../utilities/configSetup';
+import { generateIntroduction } from '../utilities/generateIntroduction';
 
 export function configureSetupCommand(program: Command) {
   return commonOptions(
     program
       .command('setup')
-      .description('Setup next.js app required to run holo'),
+      .description('Setup Holo configuration (holo.json and .env)'),
   )
     .version(getVersion(), '-v, --version', 'Display the version number')
     .action(async (options) => {
-      checkHoloJson(); // Check for holo.json before proceeding
       await printInitialBanner(false);
       await setupCommand(options);
     });
@@ -43,63 +48,47 @@ async function _setupCommand(options: CommonCommandOptions) {
 }
 
 export async function setup() {
-  intro('Setting up Holo project...');
+  intro('Setting up Holo configuration...');
 
-  const homeDir = require('os').homedir();
-  const holoDir = path.join(homeDir, '.holo');
+  // Step 1: Load existing configuration if it exists
+  const existingConfig = loadExistingConfig();
 
-  // Create .holo folder if it doesn't exist
-  if (!fs.existsSync(holoDir)) {
-    fs.mkdirSync(holoDir);
-    note(`Created directory: ${holoDir}`);
-  } else {
-    note(`Directory already exists: ${holoDir}`);
-  }
+  // Step 2: Get Core URL and API Key
+  const coreUrl = await promptCoreUrl(existingConfig);
+  const coreApiKey = await promptCoreApiKey();
 
-  // Clone the repository
-  const emitter = degit('harshithmullapudi/holo', {
-    cache: false,
-    force: true,
-    verbose: true,
+  // Step 3: Use OpenAI as the provider (for now)
+  const selectedProvider = PROVIDER_TEMPLATES.openai;
+
+  // Step 4: Get provider-specific details
+  const providerModel = await promptProviderModel(
+    selectedProvider.name,
+    selectedProvider.defaultModel,
+    existingConfig,
+  );
+  const providerApiKey = await promptProviderApiKey(selectedProvider.name);
+
+  // Step 5: Create/Update holo.json
+  saveHoloConfig(
+    coreUrl,
+    {
+      name: selectedProvider.name,
+      model: providerModel,
+      baseUrl: selectedProvider.baseUrl,
+    },
+    existingConfig,
+  );
+
+  // Step 6: Create/Update .env
+  updateEnvFile(coreApiKey, selectedProvider.name, providerApiKey);
+
+  // Step 7: Fetch persona from Core API and generate introduction.mdx
+  await generateIntroduction(coreUrl, coreApiKey, {
+    name: selectedProvider.name,
+    model: providerModel,
+    baseUrl: selectedProvider.baseUrl,
+    apiKey: providerApiKey,
   });
 
-  const spin = spinner();
-  spin.start('Cloning repository...');
-
-  try {
-    await emitter.clone(holoDir);
-    spin.stop('Repository cloned successfully.');
-  } catch (error) {
-    spin.stop('Failed to clone repository.');
-    console.error(error);
-    process.exit(1);
-  }
-
-  // Check if pnpm is installed, if not install it
-  try {
-    await execa('pnpm', ['--version']);
-    note('pnpm is already installed.');
-  } catch {
-    note('pnpm is not installed. Installing pnpm...');
-    try {
-      await execa('npm', ['install', '-g', 'pnpm']);
-      note('pnpm installed successfully.');
-    } catch (error) {
-      console.error('Error: pnpm installation failed');
-      console.error(error);
-      process.exit(1);
-    }
-  }
-
-  // Run pnpm install in the .holo folder
-  try {
-    await execa('pnpm', ['install'], { cwd: holoDir, stdio: 'inherit' });
-    note('pnpm install completed successfully.');
-  } catch (error) {
-    console.error('Error: pnpm install failed');
-    console.error(error);
-    process.exit(1);
-  }
-
-  outro('Holo project setup completed successfully!');
+  outro('Holo setup completed successfully! 🎉');
 }

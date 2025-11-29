@@ -11,3 +11,8 @@ export interface HoloConfigType {
     github?: string;
   };
 }
+
+export interface BaseLayoutContextType {
+  chatCollapsed: boolean;
+  setChatCollapsed: (value: boolean) => void;
+}

@@ -16,6 +16,9 @@ coverage
 .turbo
 .clinerules
 .cursor
+.claude
+CLAUDE.md
+AGENTS.md
 
 # Vercel
 .vercel
