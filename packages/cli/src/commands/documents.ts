@@ -1,4 +1,4 @@
-import { intro, outro, note, select } from '@clack/prompts';
+import { intro, outro, note, select, log } from '@clack/prompts';
 import { Command } from 'commander';
 import {
   CommonCommandOptions,
@@ -47,14 +47,16 @@ async function _documentsCommand(options: CommonCommandOptions) {
     const coreUrl = existingConfig.core?.url;
 
     if (!coreUrl) {
-      note('Error: Core URL not found in holo.json. Please run setup first.');
+      log.error(
+        'Error: Core URL not found in holo.json. Please run setup first.',
+      );
       process.exit(1);
     }
 
     // Get Core API key from .env
     const envPath = path.join(process.cwd(), '.env');
     if (!fs.existsSync(envPath)) {
-      note('Error: .env file not found. Please run setup first.');
+      log.error('Error: .env file not found. Please run setup first.');
       process.exit(1);
     }
 
@@ -63,7 +65,9 @@ async function _documentsCommand(options: CommonCommandOptions) {
     const coreApiKey = coreApiKeyMatch?.[1]?.trim();
 
     if (!coreApiKey) {
-      note('Error: CORE_API_KEY not found in .env. Please run setup first.');
+      log.error(
+        'Error: CORE_API_KEY not found in .env. Please run setup first.',
+      );
       process.exit(1);
     }
 
@@ -71,7 +75,7 @@ async function _documentsCommand(options: CommonCommandOptions) {
     const labels = await fetchLabels(coreUrl, coreApiKey);
 
     if (labels.length === 0) {
-      note('No labels found in your CORE workspace.');
+      log.info('No labels found in your CORE workspace.');
       outro('Done');
       return;
     }
@@ -99,10 +103,10 @@ async function _documentsCommand(options: CommonCommandOptions) {
     );
 
     if (documents.length === 0) {
-      note('No documents found for this label.');
+      log.info('No documents found for this label.');
     } else {
       const selectedLabel = labels.find((l) => l.id === selectedLabelId);
-      note(`Documents in ${selectedLabel?.name}:`);
+      log.info(`Documents in ${selectedLabel?.name}:`);
       console.log('\nID\t\t\t\t\tTitle');
       console.log('─'.repeat(80));
       documents.forEach((doc) => {
@@ -112,7 +116,9 @@ async function _documentsCommand(options: CommonCommandOptions) {
 
     outro('Documents listed successfully!');
   } catch (error) {
-    note(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    log.error(
+      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
     process.exit(1);
   }
 }

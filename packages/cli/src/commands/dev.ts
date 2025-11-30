@@ -29,7 +29,7 @@ function watchFiles(currentProcess: any) {
   const watcher = chokidar.watch('.', { ignored: /node_modules/ });
 
   watcher.on('change', (path) => {
-    note(`File ${path} has been changed. Restarting...`);
+    log.info(`File ${path} has been changed. Restarting...`);
     if (currentProcess) {
       currentProcess.kill();
     }
@@ -37,7 +37,7 @@ function watchFiles(currentProcess: any) {
   });
 
   watcher.on('add', (path) => {
-    note(`File ${path} has been added. Restarting...`);
+    log.info(`File ${path} has been added. Restarting...`);
     if (currentProcess) {
       currentProcess.kill();
     }
@@ -45,7 +45,7 @@ function watchFiles(currentProcess: any) {
   });
 
   watcher.on('unlink', (path) => {
-    note(`File ${path} has been removed. Restarting...`);
+    log.info(`File ${path} has been removed. Restarting...`);
     if (currentProcess) {
       currentProcess.kill();
     }
@@ -54,7 +54,7 @@ function watchFiles(currentProcess: any) {
 }
 
 function runDev() {
-  note(`Starting dev mode`);
+  log.info(`Starting dev mode`);
   const cwd = process.cwd();
   const holoPath = getHoloAppPath();
   const env = { ...process.env, HOLO_CONFIG_PATH: cwd };
@@ -68,7 +68,7 @@ function runDev() {
   });
 
   child.stdout.on('data', (data) => {
-    note(data.toString());
+    log.info(data.toString());
   });
 
   child.stderr.on('data', (data) => {
@@ -76,7 +76,7 @@ function runDev() {
   });
 
   child.on('close', (code) => {
-    note(`pnpm dev process exited with code ${code}`);
+    log.info(`pnpm dev process exited with code ${code}`);
   });
 
   return child;

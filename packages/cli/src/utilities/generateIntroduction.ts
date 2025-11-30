@@ -1,4 +1,4 @@
-import { confirm, isCancel, cancel, note, spinner } from '@clack/prompts';
+import { confirm, isCancel, cancel, note, spinner, log } from '@clack/prompts';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
@@ -27,8 +27,7 @@ export async function generateIntroduction(
   // Check if introduction.mdx already exists
   if (fs.existsSync(introPath)) {
     const regenerate = await confirm({
-      message:
-        'introduction.mdx already exists. Do you want to regenerate it?',
+      message: 'introduction.mdx already exists. Do you want to regenerate it?',
       initialValue: false,
     });
 
@@ -40,7 +39,7 @@ export async function generateIntroduction(
     shouldGenerateIntro = regenerate as boolean;
 
     if (!shouldGenerateIntro) {
-      note('Keeping existing introduction.mdx');
+      log.info('Keeping existing introduction.mdx');
       return;
     }
   }
@@ -129,7 +128,7 @@ async function fetchPersonaAndGenerate(
     fs.writeFileSync(introPath, introContent, 'utf-8');
 
     introSpin.stop('Generated introduction.mdx');
-    note(`Created introduction.mdx at ${introPath}`);
+    log.info(`Created introduction.mdx at ${introPath}`);
   } catch (error) {
     // Stop whichever spinner is currently active
     if (introSpin) {
@@ -137,9 +136,9 @@ async function fetchPersonaAndGenerate(
     } else {
       spin.stop('Failed to fetch persona');
     }
-    note(
+    log.error(
       `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
-    note('You can manually create introduction.mdx later');
+    log.info('You can manually create introduction.mdx later');
   }
 }

@@ -1,4 +1,4 @@
-import { intro, outro, note } from '@clack/prompts';
+import { intro, outro, note, log } from '@clack/prompts';
 import { Command } from 'commander';
 import {
   CommonCommandOptions,
@@ -53,14 +53,16 @@ async function listLabelsCommand() {
     const coreUrl = existingConfig.core?.url;
 
     if (!coreUrl) {
-      note('Error: Core URL not found in holo.json. Please run setup first.');
+      log.error(
+        'Error: Core URL not found in holo.json. Please run setup first.',
+      );
       process.exit(1);
     }
 
     // Get Core API key from .env
     const envPath = path.join(process.cwd(), '.env');
     if (!fs.existsSync(envPath)) {
-      note('Error: .env file not found. Please run setup first.');
+      log.error('Error: .env file not found. Please run setup first.');
       process.exit(1);
     }
 
@@ -69,16 +71,18 @@ async function listLabelsCommand() {
     const coreApiKey = coreApiKeyMatch?.[1]?.trim();
 
     if (!coreApiKey) {
-      note('Error: CORE_API_KEY not found in .env. Please run setup first.');
+      log.error(
+        'Error: CORE_API_KEY not found in .env. Please run setup first.',
+      );
       process.exit(1);
     }
 
     const labels = await fetchLabels(coreUrl, coreApiKey);
 
     if (labels.length === 0) {
-      note('No labels found in your CORE workspace.');
+      log.info('No labels found in your CORE workspace.');
     } else {
-      note(`Found ${labels.length} labels:`);
+      log.info(`Found ${labels.length} labels:`);
       labels.forEach((label) => {
         const selected = existingConfig.core?.labels?.includes(label.id)
           ? '[SELECTED]'
@@ -91,7 +95,9 @@ async function listLabelsCommand() {
 
     outro('Labels listed successfully!');
   } catch (error) {
-    note(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    log.error(
+      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
     process.exit(1);
   }
 }
@@ -104,14 +110,16 @@ async function updateLabelsCommand() {
     const coreUrl = existingConfig.core?.url;
 
     if (!coreUrl) {
-      note('Error: Core URL not found in holo.json. Please run setup first.');
+      log.error(
+        'Error: Core URL not found in holo.json. Please run setup first.',
+      );
       process.exit(1);
     }
 
     // Get Core API key from .env
     const envPath = path.join(process.cwd(), '.env');
     if (!fs.existsSync(envPath)) {
-      note('Error: .env file not found. Please run setup first.');
+      log.error('Error: .env file not found. Please run setup first.');
       process.exit(1);
     }
 
@@ -120,7 +128,9 @@ async function updateLabelsCommand() {
     const coreApiKey = coreApiKeyMatch?.[1]?.trim();
 
     if (!coreApiKey) {
-      note('Error: CORE_API_KEY not found in .env. Please run setup first.');
+      log.error(
+        'Error: CORE_API_KEY not found in .env. Please run setup first.',
+      );
       process.exit(1);
     }
 
@@ -141,7 +151,9 @@ async function updateLabelsCommand() {
 
     // Update holo.json
     if (!existingConfig.providers) {
-      note('Error: Provider configuration not found. Please run setup first.');
+      log.error(
+        'Error: Provider configuration not found. Please run setup first.',
+      );
       process.exit(1);
     }
 
@@ -156,7 +168,9 @@ async function updateLabelsCommand() {
 
     outro('Labels updated successfully! 🎉');
   } catch (error) {
-    note(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    log.error(
+      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
     process.exit(1);
   }
 }

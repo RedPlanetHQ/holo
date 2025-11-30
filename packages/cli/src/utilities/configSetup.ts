@@ -1,4 +1,4 @@
-import { text, isCancel, cancel, note, multiselect } from '@clack/prompts';
+import { text, isCancel, cancel, note, multiselect, log } from '@clack/prompts';
 import fs from 'node:fs';
 import path from 'node:path';
 import { HoloConfigSchema } from './holoSchema';
@@ -58,9 +58,9 @@ export function loadExistingConfig(): ExistingHoloConfig {
     try {
       const fileContent = fs.readFileSync(holoJsonPath, 'utf-8');
       existingConfig = JSON.parse(fileContent);
-      note('Found existing holo.json. Using existing values as defaults.');
+      log.info('Found existing holo.json. Using existing values as defaults.');
     } catch (error) {
-      note('Found holo.json but could not parse it. Starting fresh.');
+      log.error('Found holo.json but could not parse it. Starting fresh.');
     }
   }
 
@@ -119,7 +119,7 @@ export async function fetchLabels(
 
     return data;
   } catch (error) {
-    note('Warning: Could not fetch labels from Core API');
+    log.error('Warning: Could not fetch labels from Core API');
     return [];
   }
 }
@@ -132,7 +132,7 @@ export async function promptLabels(
   existingConfig: ExistingHoloConfig,
 ): Promise<string[]> {
   if (labels.length === 0) {
-    note('No labels found in your Core workspace');
+    log.info('No labels found in your Core workspace');
     return [];
   }
 
@@ -199,7 +199,7 @@ export async function fetchDocumentsForLabel(
 
     return allDocuments;
   } catch (error) {
-    note(`Warning: Could not fetch documents for label ${labelId}`);
+    log.error(`Warning: Could not fetch documents for label ${labelId}`);
     return [];
   }
 }
@@ -354,11 +354,13 @@ export function saveHoloConfig(
       JSON.stringify(holoConfig, null, 2),
       'utf-8',
     );
-    note(`${fs.existsSync(holoJsonPath) ? 'Updated' : 'Created'} holo.json`);
+    log.info(
+      `${fs.existsSync(holoJsonPath) ? 'Updated' : 'Created'} holo.json`,
+    );
   } catch (error) {
-    note('Warning: Generated holo.json does not match expected schema');
+    log.error('Warning: Generated holo.json does not match expected schema');
     if (error instanceof Error) {
-      note(`Validation error: ${error.message}`);
+      log.error(`Validation error: ${error.message}`);
     }
     // Still write the file but warn the user
     fs.writeFileSync(
@@ -366,7 +368,7 @@ export function saveHoloConfig(
       JSON.stringify(holoConfig, null, 2),
       'utf-8',
     );
-    note(
+    log.info(
       'holo.json was created but may need manual corrections. Please check the schema.',
     );
   }
@@ -409,5 +411,5 @@ export function updateEnvFile(
   }
 
   fs.writeFileSync(envPath, envContent.trim(), 'utf-8');
-  note(`${fs.existsSync(envPath) ? 'Updated' : 'Created'} .env`);
+  log.info(`${fs.existsSync(envPath) ? 'Updated' : 'Created'} .env`);
 }
