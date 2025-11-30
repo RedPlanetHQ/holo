@@ -4,6 +4,8 @@ import { createAISDKClient, getSystemPrompt } from 'ai-client';
 import type { AIProviderConfig, AISDKCoreTool } from 'ai-client';
 import {
   convertToModelMessages,
+  stepCountIs,
+  streamText,
   StreamTextResult,
   tool,
   validateUIMessages,
@@ -38,11 +40,12 @@ function getCoreConfig() {
   const holoConfigPath = join(process.cwd(), 'holo.json');
   const holoConfig = JSON.parse(readFileSync(holoConfigPath, 'utf-8'));
 
-  const { coreUrl } = holoConfig;
+  const { core } = holoConfig;
 
   return {
-    coreUrl,
+    coreUrl: core.url,
     apiKey: process.env.CORE_API_KEY,
+    labels: core.labels,
   };
 }
 
@@ -149,7 +152,10 @@ export async function POST(req: Request) {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${coreConfig.apiKey}`,
           },
-          body: JSON.stringify(params),
+          body: JSON.stringify({
+            ...params,
+            labelIds: coreConfig.labels,
+          }),
         });
 
         if (!response.ok) {
@@ -165,23 +171,23 @@ export async function POST(req: Request) {
     messages: finalMessages,
   });
 
-  // Stream response
-  const result = (await client.chatStream(
-    [
+  const model = await client.getModel();
+
+  const result = streamText({
+    model,
+    messages: [
       {
         role: 'system',
         content: getSystemPrompt(persona),
       },
-      ...(convertToModelMessages(validatedMessages) as any),
+      ...convertToModelMessages(validatedMessages, {
+        tools,
+      }),
     ],
-    tools, // No tools for now
-    {
-      onToken: () => {
-        // Token streaming handled by response
-      },
-    },
-    true,
-  )) as StreamTextResult<Record<string, AISDKCoreTool>, never>;
+    tools,
+
+    stopWhen: [stepCountIs(10)],
+  });
 
   result.consumeStream(); // no await
 

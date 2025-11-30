@@ -1,6 +1,6 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { generateText, streamText } from 'ai';
-import type { ModelMessage, StreamTextResult } from 'ai';
+import { generateText, stepCountIs, streamText } from 'ai';
+import type { LanguageModel, ModelMessage, StreamTextResult } from 'ai';
 import { Agent, fetch as undiciFetch } from 'undici';
 import type {
   AIProviderConfig,
@@ -331,6 +331,11 @@ export class AISDKClient implements LLMClient {
     }
   }
 
+  async getModel(): Promise<LanguageModel> {
+    const model = this.provider(this.currentModel);
+    return model;
+  }
+
   /**
    * Stream chat with real-time token updates
    */
@@ -371,6 +376,7 @@ export class AISDKClient implements LLMClient {
         tools: aiTools,
         abortSignal: signal,
         providerOptions,
+        stopWhen: [stepCountIs(10)],
       });
 
       if (inServer) {

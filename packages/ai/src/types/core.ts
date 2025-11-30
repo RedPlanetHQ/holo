@@ -1,4 +1,10 @@
-import { tool, jsonSchema, type Tool as AISDKTool, StreamTextResult } from 'ai';
+import {
+  tool,
+  jsonSchema,
+  type Tool as AISDKTool,
+  StreamTextResult,
+  LanguageModel,
+} from 'ai';
 
 export { tool, jsonSchema };
 
@@ -142,6 +148,7 @@ export interface StreamCallbacks {
 
 export interface LLMClient {
   getCurrentModel(): string;
+  getModel(): Promise<LanguageModel>;
   setModel(model: string): void;
   getContextSize(): number;
   chat(

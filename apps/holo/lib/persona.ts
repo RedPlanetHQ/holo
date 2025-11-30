@@ -8,10 +8,12 @@ function getCoreConfig() {
   const holoConfigPath = join(process.cwd(), 'holo.json');
   const holoConfig = JSON.parse(readFileSync(holoConfigPath, 'utf-8'));
 
-  const { coreUrl } = holoConfig;
+  const {
+    core: { url },
+  } = holoConfig;
 
   return {
-    coreUrl,
+    coreUrl: url,
     apiKey: process.env.CORE_API_KEY,
   };
 }

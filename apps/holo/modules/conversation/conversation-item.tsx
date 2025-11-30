@@ -35,7 +35,7 @@ const Tool = ({ part }: { part: ToolUIPart<any> }) => {
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="my-1 rounded border-1 border-border px-2"
+      className="my-1 mb-2 rounded border-1 border-border px-2"
     >
       <CollapsibleTrigger asChild>
         <Button
@@ -44,9 +44,7 @@ const Tool = ({ part }: { part: ToolUIPart<any> }) => {
           size="xl"
           className="flex justify-between gap-4 px-2 py-2"
         >
-          <div className="flex items-center gap-2">
-            {titleCase(part.type.replace('tool-', '').replace(/_/g, ' '))}
-          </div>
+          <div className="flex items-center gap-2">Harshith is thinking...</div>
 
           <ChevronsUpDown size={16} />
         </Button>
