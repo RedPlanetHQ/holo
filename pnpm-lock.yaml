@@ -204,9 +204,6 @@ importers:
       '@holo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@netlify/plugin-nextjs':
-        specifier: 5.15.1
-        version: 5.15.1
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.10(tailwindcss@4.1.17)
@@ -992,10 +989,6 @@ packages:
 
   '@microsoft/tsdoc@0.14.2':
     resolution: {integrity: sha512-9b8mPpKrfeGRuhFH5iO1iwCLeIIsV6+H1sRfxbkoGXIyQE2BTsPd9zqSqQJ+pv5sJ/hT5M1zvOFL02MnEezFug==}
-
-  '@netlify/plugin-nextjs@5.15.1':
-    resolution: {integrity: sha512-HXm94tteOuA0FYwhkxjYIPe0zta+Dsu0wz7LnhfqVlaYcRaOLjHtd2vgfmpz3np/fx9TQg3gCfqGkXt2a9i7Aw==}
-    engines: {node: '>=18.0.0'}
 
   '@next/env@14.2.5':
     resolution: {integrity: sha512-/zZGkrTOsraVfYjGP8uM0p6r0BDT6xWpkjdVbcz66PJVSpwXX3yNiRycxAuDfBKGWBrZBXRuK/YVlkNgxHGwmA==}
@@ -6338,8 +6331,6 @@ snapshots:
       resolve: 1.19.0
 
   '@microsoft/tsdoc@0.14.2': {}
-
-  '@netlify/plugin-nextjs@5.15.1': {}
 
   '@next/env@14.2.5': {}
 

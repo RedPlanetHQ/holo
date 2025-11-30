@@ -7,7 +7,12 @@ import path from 'node:path';
 import cpy from 'cpy';
 import { checkHoloJson } from '../utilities/checkConfigFile';
 import { checkEnvVariables, getRequiredEnvVars } from '../utilities/checkEnv';
-import { getHoloAppPath, ensureProjectSetup } from '../utilities/setupProject';
+import {
+  getHoloAppPath,
+  ensureProjectSetup,
+  setupProject,
+} from '../utilities/setupProject';
+import { loadExistingConfig } from '../utilities/configSetup';
 
 export function configureBuildCommand(program: Command) {
   return commonOptions(
@@ -19,9 +24,20 @@ export function configureBuildCommand(program: Command) {
     .action(async (options) => {
       checkHoloJson(); // Check for holo.json before proceeding
       checkEnvVariables(getRequiredEnvVars()); // Check for required .env variables
-      await ensureProjectSetup(); // Ensure project is set up before building
-      await runBuild();
-      await copyFiles();
+
+      const existingConfig = loadExistingConfig();
+      if (existingConfig.deployment === 'netlify') {
+        const currentDir = process.cwd();
+        const main = `${currentDir}/.main`;
+        await setupProject(main);
+
+        await runNetlifyBuild();
+      } else {
+        await ensureProjectSetup(); // Ensure project is set up before building
+
+        await runBuild();
+        await copyFiles();
+      }
     });
 }
 
@@ -43,6 +59,32 @@ async function runBuild() {
   }
 }
 
+// Function to run the build command
+async function runNetlifyBuild() {
+  const currentDir = process.cwd();
+  const main = `${currentDir}/.main`;
+  const nextApp = `${main}/apps/holo`;
+
+  try {
+    await execa('pnpm', ['build'], {
+      cwd: nextApp,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+
+    await cpy(['**/*.mdx', '**/*.json', '!.main/**'], `${nextApp}/.next/`, {
+      cwd: currentDir,
+      flat: true,
+      ignore: ['node_modules/**', '.git/**', '.env', '.main/**/*'],
+    });
+
+    log.info('Build completed successfully.');
+  } catch (err: any) {
+    log.error(`Build failed: ${err.message}`);
+    process.exit(1);
+  }
+}
+
 // Function to copy files
 async function copyFiles() {
   const holoPath = getHoloAppPath();
@@ -54,7 +96,6 @@ async function copyFiles() {
     // Copy all files and directories from current working directory to dist
     await cpy(['**/*'], distPath, {
       cwd: currentDir,
-      flat: true,
       ignore: ['node_modules/**', '.git/**', '.env'],
     });
 

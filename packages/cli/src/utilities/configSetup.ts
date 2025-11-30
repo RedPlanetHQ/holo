@@ -23,6 +23,7 @@ interface ExistingHoloConfig {
   navbar?: any;
   footer?: any;
   providers?: ProviderConfig;
+  deployment?: string;
 }
 
 interface Label {

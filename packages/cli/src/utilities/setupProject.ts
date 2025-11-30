@@ -7,9 +7,9 @@ import path from 'node:path';
 /**
  * Sets up the Holo project by cloning the repository and installing dependencies
  */
-export async function setupProject() {
+export async function setupProject(dir?: string) {
   const homeDir = require('os').homedir();
-  const holoDir = path.join(homeDir, '.holo');
+  const holoDir = dir ? path.join(dir) : path.join(homeDir, '.holo');
 
   // Create .holo folder if it doesn't exist
   if (!fs.existsSync(holoDir)) {
