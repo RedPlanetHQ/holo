@@ -22,10 +22,9 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-import holoConfig from '@/holo.json';
-import { HoloConfig } from '@/types/schema';
+import { HoloConfigContext } from '@/components/config-provider';
 
-const config = holoConfig as HoloConfig;
+import { HoloConfig } from '@/types/schema';
 
 // Hook to fetch metadata for all pages
 function usePageMetadata() {
@@ -53,49 +52,51 @@ function usePageMetadata() {
   return { metadata, loading };
 }
 
-// Build socials from holo.json footer.socials (only if they exist)
-const socials = config.footer?.socials
-  ? [
-      ...(config.footer.socials.twitter
-        ? [
-            {
-              title: 'Twitter',
-              url: config.footer.socials.twitter,
-              icon: Twitter,
-            },
-          ]
-        : []),
-      ...(config.footer.socials.github
-        ? [
-            {
-              title: 'GitHub',
-              url: config.footer.socials.github,
-              icon: Github,
-            },
-          ]
-        : []),
-      ...(config.footer.socials.linkedin
-        ? [
-            {
-              title: 'LinkedIn',
-              url: config.footer.socials.linkedin,
-              icon: Linkedin,
-            },
-          ]
-        : []),
-      ...(config.footer.socials.discord
-        ? [
-            {
-              title: 'Discord',
-              url: config.footer.socials.discord,
-              icon: MessageCircle,
-            },
-          ]
-        : []),
-    ]
-  : [];
+function buildSocials(config: HoloConfig) {
+  return config.footer?.socials
+    ? [
+        ...(config.footer.socials.twitter
+          ? [
+              {
+                title: 'Twitter',
+                url: config.footer.socials.twitter,
+                icon: Twitter,
+              },
+            ]
+          : []),
+        ...(config.footer.socials.github
+          ? [
+              {
+                title: 'GitHub',
+                url: config.footer.socials.github,
+                icon: Github,
+              },
+            ]
+          : []),
+        ...(config.footer.socials.linkedin
+          ? [
+              {
+                title: 'LinkedIn',
+                url: config.footer.socials.linkedin,
+                icon: Linkedin,
+              },
+            ]
+          : []),
+        ...(config.footer.socials.discord
+          ? [
+              {
+                title: 'Discord',
+                url: config.footer.socials.discord,
+                icon: MessageCircle,
+              },
+            ]
+          : []),
+      ]
+    : [];
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const holoConfig = React.useContext(HoloConfigContext) as HoloConfig;
   const pathname = usePathname();
   const { metadata } = usePageMetadata();
 
@@ -104,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Build navigation from holo.json - preserve groups
   const navGroups =
-    config.navigation?.map((group) => ({
+    holoConfig.navigation?.map((group) => ({
       label: group.group,
       items: group.pages.map((page) => {
         const pageName = page.split('/').pop() || page;
@@ -125,6 +126,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }),
     })) || [];
 
+  const socials = buildSocials(holoConfig);
+
   return (
     <Sidebar variant="inset" {...props} className="bg-background">
       <SidebarHeader>
@@ -133,7 +136,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="md" asChild>
               <a href="/">
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{config.name}</span>
+                  <span className="truncate font-semibold">
+                    {holoConfig.name}
+                  </span>
                 </div>
               </a>
             </SidebarMenuButton>

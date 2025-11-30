@@ -1,6 +1,12 @@
-import holoConfig from '@/holo.json';
+'use client';
+
+import { useContext } from 'react';
+import { HoloConfigContext } from '@/components/config-provider';
+
+import { HoloConfig } from '@/types/schema';
 
 export function Footer() {
+  const holoConfig = useContext(HoloConfigContext) as HoloConfig;
   const currentYear = new Date().getFullYear();
 
   return (
