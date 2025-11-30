@@ -82,6 +82,7 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "4.1.17",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@netlify/plugin-nextjs": "5.15.1"
   }
 }
