@@ -53,15 +53,13 @@ export async function setupProject(dir?: string) {
  */
 async function ensurePnpmInstalled() {
   try {
-    await execa('pnpm', ['--version'], { stdio: 'pipe' });
-  } catch {
-    try {
-      await execa('npm', ['install', '-g', 'pnpm'], { stdio: 'pipe' });
-    } catch (error) {
-      console.error('Error: pnpm installation failed');
-      console.error(error);
-      process.exit(1);
-    }
+    await execa('npm', ['install', '-g', 'pnpm@9.0.0'], { stdio: 'pipe' });
+    const response = await execa('pnpm', ['--version'], { stdio: 'pipe' });
+    console.log(response);
+  } catch (error) {
+    console.error('Error: pnpm installation failed');
+    console.error(error);
+    process.exit(1);
   }
 }
 
