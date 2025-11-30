@@ -18,7 +18,10 @@ export function checkEnvVariables(requiredVars: string[]): boolean {
     process.exit(1);
   }
 
-  // Load .env file
+  // Load .env file into process.env
+  dotenv.config({ path: envPath });
+
+  // Load .env file for validation
   const envConfig = dotenv.parse(fs.readFileSync(envPath, 'utf-8'));
 
   // Check for missing variables

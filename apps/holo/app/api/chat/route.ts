@@ -1,28 +1,29 @@
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import path, { join } from 'path';
 import { createAISDKClient, getSystemPrompt } from 'ai-client';
-import type { AIProviderConfig, AISDKCoreTool } from 'ai-client';
+import type { AIProviderConfig } from 'ai-client';
 import {
   convertToModelMessages,
   stepCountIs,
   streamText,
-  StreamTextResult,
   tool,
   validateUIMessages,
 } from 'ai';
 import { loadChat, saveChat } from '@/lib/store';
 import z from 'zod';
 import { fetchPersona } from '@/lib/persona';
+import { promises as fs } from 'fs';
+import { HoloConfig } from '@/types/schema';
 
 // Allow streaming responses up to 60 seconds
 export const maxDuration = 60;
+const holoConfigPath = process.env.HOLO_CONFIG_PATH ?? process.cwd();
 
 // Read provider configuration from holo.json
-function getProviderConfig(): AIProviderConfig {
-  const holoConfigPath = join(process.cwd(), 'holo.json');
-  const holoConfig = JSON.parse(readFileSync(holoConfigPath, 'utf-8'));
-
-  const { providers } = holoConfig;
+async function getProviderConfig(
+  config: HoloConfig,
+): Promise<AIProviderConfig> {
+  const { providers } = config;
 
   return {
     name: providers.name,
@@ -36,11 +37,8 @@ function getProviderConfig(): AIProviderConfig {
 }
 
 // Read provider configuration from holo.json
-function getCoreConfig() {
-  const holoConfigPath = join(process.cwd(), 'holo.json');
-  const holoConfig = JSON.parse(readFileSync(holoConfigPath, 'utf-8'));
-
-  const { core } = holoConfig;
+function getCoreConfig(config: HoloConfig) {
+  const { core } = config;
 
   return {
     coreUrl: core.url,
@@ -48,6 +46,13 @@ function getCoreConfig() {
     labels: core.labels,
   };
 }
+
+const getConfig = async () => {
+  const holoJsonPath = path.join(holoConfigPath, 'holo.json');
+  const holoConfig = JSON.parse(await fs.readFile(holoJsonPath, 'utf8'));
+
+  return holoConfig;
+};
 
 // Memory tool schemas (Zod-based)
 const SearchParamsSchema = z.object({
@@ -125,16 +130,17 @@ export async function POST(req: Request) {
   const requestBody = await req.json();
 
   const { messages, id } = requestBody;
-  const coreConfig = getCoreConfig();
+  const config = await getConfig();
+  const coreConfig = getCoreConfig(config);
   const previousMessages = await loadChat(id);
   // Append new message to previousMessages messages
   const finalMessages = [...previousMessages, ...messages];
 
   // Fetch persona from Core API
-  const persona = await fetchPersona();
+  const persona = await fetchPersona(coreConfig);
 
   // Get provider configuration
-  const providerConfig = getProviderConfig();
+  const providerConfig = await getProviderConfig(config);
 
   // Create AI client
   const { client } = await createAISDKClient(providerConfig);

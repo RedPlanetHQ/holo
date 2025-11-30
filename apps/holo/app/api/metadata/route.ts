@@ -5,7 +5,11 @@ import matter from 'gray-matter';
 
 const holoConfigPath = process.env.HOLO_CONFIG_PATH ?? process.cwd();
 
-async function fetchCoreDocumentMetadata(logId: string, coreUrl: string, coreApiKey: string) {
+async function fetchCoreDocumentMetadata(
+  logId: string,
+  coreUrl: string,
+  coreApiKey: string,
+) {
   try {
     const response = await fetch(`${coreUrl}/api/v1/logs/${logId}`, {
       headers: {
@@ -78,10 +82,14 @@ async function fetchAllMetadata() {
           for (const page of group.pages) {
             // Check if this is a CORE document
             const coreMatch = page.match(/^CORE\s+(.+)$/);
-
+            console.log(coreMatch);
             if (coreMatch && coreUrl && coreApiKey) {
               const logId = coreMatch[1];
-              metadataMap[page] = await fetchCoreDocumentMetadata(logId, coreUrl, coreApiKey);
+              metadataMap[page] = await fetchCoreDocumentMetadata(
+                logId,
+                coreUrl,
+                coreApiKey,
+              );
             } else {
               // Regular MDX file
               const fileName = page.endsWith('.mdx') ? page : `${page}.mdx`;
@@ -123,7 +131,11 @@ export async function GET(req: NextRequest) {
       }
 
       const logId = coreMatch[1].replace('.mdx', '');
-      const metadata = await fetchCoreDocumentMetadata(logId, coreUrl, coreApiKey);
+      const metadata = await fetchCoreDocumentMetadata(
+        logId,
+        coreUrl,
+        coreApiKey,
+      );
       return NextResponse.json(metadata);
     }
 
@@ -134,7 +146,7 @@ export async function GET(req: NextRequest) {
     console.error('Error in metadata route:', error);
     return NextResponse.json(
       { error: 'Failed to fetch metadata' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 }
