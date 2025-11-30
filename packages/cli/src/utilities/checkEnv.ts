@@ -9,20 +9,21 @@ import dotenv from 'dotenv';
  * @returns {boolean} True if all required vars exist, otherwise exits
  */
 export function checkEnvVariables(requiredVars: string[]): boolean {
-  const envPath = path.join(process.cwd(), '.env');
+  let envConfig: Record<string, string | undefined> = {};
 
-  // Check if .env exists
-  if (!fs.existsSync(envPath)) {
-    log.error('.env file not found in the current directory.');
-    log.info('Run "holo setup" to configure your environment.');
-    process.exit(1);
-  }
+  try {
+    const envPath = path.join(process.cwd(), '.env');
 
-  // Load .env file into process.env
-  dotenv.config({ path: envPath });
+    // Load .env file into process.env
+    dotenv.config({ path: envPath });
 
-  // Load .env file for validation
-  const envConfig = dotenv.parse(fs.readFileSync(envPath, 'utf-8'));
+    envConfig = dotenv.parse(fs.readFileSync(envPath, 'utf-8'));
+  } catch (e) {}
+
+  envConfig = {
+    ...envConfig,
+    ...process.env,
+  };
 
   // Check for missing variables
   const missingVars = requiredVars.filter((varName) => !envConfig[varName]);
