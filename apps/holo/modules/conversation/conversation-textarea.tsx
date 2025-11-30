@@ -29,6 +29,7 @@ export function ConversationTextarea({
   onChange,
   onConversationCreated,
   stop,
+  className,
 }: ConversationTextareaProps) {
   const [text, setText] = useState(defaultValue ?? '');
   const [editor, setEditor] = useState<Editor>();
@@ -50,7 +51,7 @@ export function ConversationTextarea({
   }, [editor, text]);
 
   return (
-    <div className="bg-background-2 rounded-lg border-1 border-gray-300 py-2">
+    <div className={cn('rounded-lg border-1 border-gray-300 py-2', className)}>
       <EditorRoot>
         <EditorContent
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

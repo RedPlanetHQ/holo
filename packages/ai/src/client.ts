@@ -1,6 +1,6 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { generateText, streamText } from 'ai';
-import type { ModelMessage } from 'ai';
+import type { ModelMessage, StreamTextResult } from 'ai';
 import { Agent, fetch as undiciFetch } from 'undici';
 import type {
   AIProviderConfig,
@@ -10,7 +10,7 @@ import type {
   ToolCall,
   AISDKCoreTool,
   StreamCallbacks,
-} from '@/types/index';
+} from './types/index';
 import { XMLToolCallParser } from './xml-parser';
 import { isReasoningModel } from './models';
 
@@ -181,7 +181,7 @@ export class AISDKClient implements LLMClient {
       // Type cast to string | URL since undici's fetch accepts these types
       // Request objects are converted to URL internally by the fetch spec
       return undiciFetch(url as string | URL, {
-        ...options,
+        ...(options as any),
         dispatcher: this.undiciAgent,
       }) as Promise<Response>;
     };
@@ -338,8 +338,11 @@ export class AISDKClient implements LLMClient {
     messages: Message[],
     tools: Record<string, AISDKCoreTool>,
     callbacks: StreamCallbacks,
+    inServer?: boolean,
     signal?: AbortSignal,
-  ): Promise<LLMChatResponse> {
+  ): Promise<
+    LLMChatResponse | StreamTextResult<Record<string, AISDKCoreTool>, never>
+  > {
     // Check if already aborted before starting
     if (signal?.aborted) {
       throw new Error('Operation was cancelled');
@@ -369,6 +372,10 @@ export class AISDKClient implements LLMClient {
         abortSignal: signal,
         providerOptions,
       });
+
+      if (inServer) {
+        return result;
+      }
 
       // Stream tokens
       let fullText = '';

@@ -32,9 +32,7 @@ const NavbarLinkSchema = z.object({
 // Zod schema for Navbar Primary
 const NavbarPrimarySchema = z.object({
   type: z.enum(['github', 'custom'], {
-    errorMap: () => ({
-      message: 'Primary type must be either "github" or "custom"',
-    }),
+    message: 'Primary type must be either "github" or "custom"',
   }),
   href: z.string().url('Primary href must be a valid URL'),
 });

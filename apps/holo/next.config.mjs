@@ -6,7 +6,7 @@ import remarkRehype from 'remark-rehype';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-  transpilePackages: ['next-mdx-remote'],
+  transpilePackages: ['next-mdx-remote', 'ai-client'],
 };
 
 const withMDX = createMDX({

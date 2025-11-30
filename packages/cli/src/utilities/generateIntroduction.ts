@@ -1,7 +1,11 @@
 import { confirm, isCancel, cancel, note, spinner } from '@clack/prompts';
 import fs from 'node:fs';
 import path from 'node:path';
-import { createAISDKClient } from 'ai-client';
+import {
+  createAISDKClient,
+  INTRODUCTION_GENERATION_PROMPT,
+  INTRODUCTION_SYSTEM_PROMPT,
+} from 'ai-client';
 import type { AIProviderConfig } from 'ai-client';
 
 /**
@@ -109,12 +113,11 @@ async function fetchPersonaAndGenerate(
       [
         {
           role: 'system',
-          content:
-            'You are a helpful assistant that creates professional introduction pages in MDX format.',
+          content: INTRODUCTION_SYSTEM_PROMPT,
         },
         {
           role: 'user',
-          content: `Create a professional introduction page in MDX format based on this persona information:\n\n${persona}\n\nThe page should be well-formatted, engaging, and highlight key information about the person. Use proper MDX syntax with headings, paragraphs, and formatting.`,
+          content: `${INTRODUCTION_GENERATION_PROMPT}\n\nPersona information:\n\n${persona}`,
         },
       ],
       {},

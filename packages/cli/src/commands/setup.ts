@@ -15,6 +15,9 @@ import {
   promptProviderApiKey,
   saveHoloConfig,
   updateEnvFile,
+  fetchLabels,
+  promptLabels,
+  fetchDocumentsForLabel,
   PROVIDER_TEMPLATES,
 } from '../utilities/configSetup';
 import { generateIntroduction } from '../utilities/generateIntroduction';
@@ -57,10 +60,21 @@ export async function setup() {
   const coreUrl = await promptCoreUrl(existingConfig);
   const coreApiKey = await promptCoreApiKey();
 
-  // Step 3: Use OpenAI as the provider (for now)
+  // Step 3: Fetch and select labels
+  const labelsData = await fetchLabels(coreUrl, coreApiKey);
+  const selectedLabels = await promptLabels(labelsData, existingConfig);
+
+  // Step 4: Fetch documents for each selected label
+  const documentsData = new Map<string, any[]>();
+  for (const labelId of selectedLabels) {
+    const documents = await fetchDocumentsForLabel(coreUrl, coreApiKey, labelId);
+    documentsData.set(labelId, documents);
+  }
+
+  // Step 5: Use OpenAI as the provider (for now)
   const selectedProvider = PROVIDER_TEMPLATES.openai;
 
-  // Step 4: Get provider-specific details
+  // Step 6: Get provider-specific details
   const providerModel = await promptProviderModel(
     selectedProvider.name,
     selectedProvider.defaultModel,
@@ -68,21 +82,24 @@ export async function setup() {
   );
   const providerApiKey = await promptProviderApiKey(selectedProvider.name);
 
-  // Step 5: Create/Update holo.json
+  // Step 7: Create/Update holo.json
   saveHoloConfig(
     coreUrl,
+    selectedLabels,
     {
       name: selectedProvider.name,
       model: providerModel,
       baseUrl: selectedProvider.baseUrl,
     },
     existingConfig,
+    labelsData,
+    documentsData,
   );
 
-  // Step 6: Create/Update .env
+  // Step 8: Create/Update .env
   updateEnvFile(coreApiKey, selectedProvider.name, providerApiKey);
 
-  // Step 7: Fetch persona from Core API and generate introduction.mdx
+  // Step 9: Fetch persona from Core API and generate introduction.mdx
   await generateIntroduction(coreUrl, coreApiKey, {
     name: selectedProvider.name,
     model: providerModel,

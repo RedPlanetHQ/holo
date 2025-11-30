@@ -1,7 +1,5 @@
 import { AISDKClient } from './client';
-import type { LLMClient, AIProviderConfig } from '@/types/index';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import type { LLMClient, AIProviderConfig } from './types/index';
 
 // Custom error class for configuration errors that need special UI handling
 export class ConfigurationError extends Error {
@@ -79,3 +77,4 @@ async function testProviderConnection(
 }
 
 export * from './types';
+export * from './prompts';

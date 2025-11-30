@@ -1,4 +1,4 @@
-import { text, isCancel, cancel, note } from '@clack/prompts';
+import { text, isCancel, cancel, note, multiselect } from '@clack/prompts';
 import fs from 'node:fs';
 import path from 'node:path';
 import { HoloConfigSchema } from './holoSchema';
@@ -9,15 +9,34 @@ interface ProviderConfig {
   baseUrl: string;
 }
 
+interface CoreConfig {
+  url: string;
+  labels?: string[];
+}
+
 interface ExistingHoloConfig {
   name?: string;
-  coreUrl?: string;
+  core?: CoreConfig;
   colors?: any;
   favicon?: string;
   navigation?: any[];
   navbar?: any;
   footer?: any;
   providers?: ProviderConfig;
+}
+
+interface Label {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string;
+}
+
+interface Document {
+  id: string;
+  episodeId: string;
+  title: string;
+  type: string;
 }
 
 export const PROVIDER_TEMPLATES = {
@@ -57,7 +76,7 @@ export async function promptCoreUrl(
   const coreUrl = await text({
     message: 'Enter your Core URL:',
     placeholder: 'https://core.example.com',
-    initialValue: existingConfig.coreUrl ?? 'https://core.heysol.ai',
+    initialValue: existingConfig.core?.url ?? 'https://core.heysol.ai',
     validate: (value) => {
       if (!value) return 'Core URL is required';
       try {
@@ -75,6 +94,114 @@ export async function promptCoreUrl(
   }
 
   return coreUrl as string;
+}
+
+/**
+ * Fetches labels from Core API
+ */
+export async function fetchLabels(
+  coreUrl: string,
+  coreApiKey: string,
+): Promise<Label[]> {
+  try {
+    const response = await fetch(`${coreUrl}/api/v1/labels`, {
+      headers: {
+        Authorization: `Bearer ${coreApiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch labels: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    note('Warning: Could not fetch labels from Core API');
+    return [];
+  }
+}
+
+/**
+ * Prompts user to select labels
+ */
+export async function promptLabels(
+  labels: Label[],
+  existingConfig: ExistingHoloConfig,
+): Promise<string[]> {
+  if (labels.length === 0) {
+    note('No labels found in your Core workspace');
+    return [];
+  }
+
+  const selectedLabels = await multiselect({
+    message: 'Select labels to include:',
+    options: labels.map((label) => ({
+      value: label.id,
+      label: label.name,
+      hint: label.description,
+    })),
+    initialValues: existingConfig.core?.labels ?? [],
+  });
+
+  if (isCancel(selectedLabels)) {
+    cancel('Setup cancelled.');
+    process.exit(0);
+  }
+
+  return selectedLabels as string[];
+}
+
+/**
+ * Fetches documents for a specific label with pagination support
+ */
+export async function fetchDocumentsForLabel(
+  coreUrl: string,
+  coreApiKey: string,
+  labelId: string,
+): Promise<Document[]> {
+  try {
+    const allDocuments: Document[] = [];
+    let hasMore = true;
+    let cursor: string | undefined = undefined;
+
+    while (hasMore) {
+      const url = new URL(`${coreUrl}/api/v1/logs`);
+      url.searchParams.append('label', labelId);
+      url.searchParams.append('type', 'DOCUMENT');
+      if (cursor) {
+        url.searchParams.append('cursor', cursor);
+      }
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${coreApiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch documents: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Extract documents from logs array
+      if (data.logs && Array.isArray(data.logs)) {
+        allDocuments.push(...data.logs);
+      }
+
+      hasMore = data.hasMore || false;
+      cursor = data.nextCursor;
+    }
+
+    return allDocuments;
+  } catch (error) {
+    note(`Warning: Could not fetch documents for label ${labelId}`);
+    return [];
+  }
 }
 
 /**
@@ -127,7 +254,9 @@ export async function promptProviderModel(
 /**
  * Prompts user for provider API key
  */
-export async function promptProviderApiKey(providerName: string): Promise<string> {
+export async function promptProviderApiKey(
+  providerName: string,
+): Promise<string> {
   const providerApiKey = await text({
     message: `Enter your ${providerName.toUpperCase()} API Key:`,
     placeholder: 'sk-xxx',
@@ -150,34 +279,71 @@ export async function promptProviderApiKey(providerName: string): Promise<string
  */
 export function saveHoloConfig(
   coreUrl: string,
+  selectedLabels: string[],
   providerConfig: {
     name: string;
     model: string;
     baseUrl: string;
   },
   existingConfig: ExistingHoloConfig,
+  labelsData: Label[],
+  documentsData: Map<string, Document[]>,
 ) {
   const holoJsonPath = path.join(process.cwd(), 'holo.json');
 
+  // Build navigation from documents
+  const navigation: any[] = [];
+
+  // Add existing navigation groups that are not CORE-related
+  if (existingConfig.navigation) {
+    existingConfig.navigation.forEach((group) => {
+      const isCoreGroup = group.pages?.some((page: string) =>
+        page.startsWith('CORE '),
+      );
+      if (!isCoreGroup) {
+        navigation.push(group);
+      }
+    });
+  }
+
+  // Add default Getting Started if no navigation exists
+  if (navigation.length === 0) {
+    navigation.push({
+      group: 'Getting Started',
+      pages: ['introduction'],
+    });
+  }
+
+  // Add CORE document groups
+  selectedLabels.forEach((labelId) => {
+    const label = labelsData.find((l) => l.id === labelId);
+    const documents = documentsData.get(labelId) || [];
+
+    if (label && documents.length > 0) {
+      navigation.push({
+        group: label.name,
+        pages: documents.map((doc) => `CORE ${doc.id}`),
+      });
+    }
+  });
+
   const holoConfig = {
     ...existingConfig, // Preserve all existing fields
-    coreUrl: coreUrl,
+    core: {
+      url: coreUrl,
+      labels: selectedLabels,
+    },
     providers: {
       name: providerConfig.name,
       model: providerConfig.model,
       baseUrl: providerConfig.baseUrl,
     },
+    navigation,
   };
 
   // If no existing config, set default structure
   if (!existingConfig.name) {
     holoConfig.name = 'My Holo Project';
-    holoConfig.navigation = [
-      {
-        group: 'Getting Started',
-        pages: ['introduction'],
-      },
-    ];
   }
 
   // Validate the config against the schema

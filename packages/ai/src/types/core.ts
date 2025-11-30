@@ -1,4 +1,4 @@
-import { tool, jsonSchema, type Tool as AISDKTool } from 'ai';
+import { tool, jsonSchema, type Tool as AISDKTool, StreamTextResult } from 'ai';
 
 export { tool, jsonSchema };
 
@@ -149,12 +149,15 @@ export interface LLMClient {
     tools: Record<string, AISDKCoreTool>,
     signal?: AbortSignal,
   ): Promise<LLMChatResponse>;
-  chatStream?(
+  chatStream(
     messages: Message[],
     tools: Record<string, AISDKCoreTool>,
     callbacks: StreamCallbacks,
+    isServer?: boolean,
     signal?: AbortSignal,
-  ): Promise<LLMChatResponse>;
+  ): Promise<
+    LLMChatResponse | StreamTextResult<Record<string, AISDKCoreTool>, never>
+  >;
   clearContext(): Promise<void>;
 }
 

@@ -6,7 +6,6 @@ import { Nav } from '@/components/nav';
 import { Footer } from '@/components/footer';
 import { HoloConfig } from '@/components/config-provider';
 import { BaseLayout } from '@/layouts/base-layout';
-import { ThemeProvider } from 'next-themes';
 
 export default function RootLayout({
   children,
@@ -22,11 +21,14 @@ export default function RootLayout({
         <HoloConfig>
           <BaseLayout>
             <div className="h-full w-full flex flex-col overflow-hidden">
-              <main className="mx-auto w-full max-w-screen-sm font-sans md:max-w-screen-md lg:max-w-screen-lg overflow-auto flex flex-col gap-6">
+              <main className="mx-auto w-full overflow-auto flex flex-col">
                 <Nav />
-                <div className="px-8">{children}</div>
-                <div className="px-8">
-                  <Footer />
+                <div className="px-8 h-[calc(100vh_-_80px)] overflow-y-auto">
+                  {children}
+
+                  <div className="mt-4">
+                    <Footer />
+                  </div>
                 </div>
               </main>
             </div>
