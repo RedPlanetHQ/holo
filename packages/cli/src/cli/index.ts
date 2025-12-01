@@ -4,7 +4,6 @@ import { COMMAND_NAME } from '../consts';
 import { getVersion } from '../utilities/getVersion';
 import { configureSetupCommand } from '../commands/setup';
 import { configureDevCommand } from '../commands/dev';
-import { configureBuildCommand } from '../commands/build';
 import { configureLabelsCommand } from '../commands/labels';
 import { configureDocumentsCommand } from '../commands/documents';
 
@@ -17,6 +16,5 @@ program
 
 configureSetupCommand(program);
 configureDevCommand(program);
-configureBuildCommand(program);
 configureLabelsCommand(program);
 configureDocumentsCommand(program);

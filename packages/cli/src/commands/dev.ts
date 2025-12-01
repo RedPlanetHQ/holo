@@ -3,7 +3,7 @@ import { commonOptions } from '../cli/common';
 import { getVersion } from '../utilities/getVersion';
 import { printInitialBanner } from '../utilities/initialBanner';
 import chokidar from 'chokidar';
-import { note, log } from '@clack/prompts';
+import { log } from '@clack/prompts';
 import { execa } from 'execa';
 import { checkHoloJson } from '../utilities/checkConfigFile';
 import { checkEnvVariables, getRequiredEnvVars } from '../utilities/checkEnv';

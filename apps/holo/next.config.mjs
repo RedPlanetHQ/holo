@@ -7,6 +7,7 @@ import remarkRehype from 'remark-rehype';
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: ['next-mdx-remote', 'ai-client'],
+  output: 'standalone',
 };
 
 const withMDX = createMDX({

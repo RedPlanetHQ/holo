@@ -39,7 +39,10 @@ export async function setupProject(dir?: string) {
 
   // Run pnpm install in the .holo folder
   try {
-    await execa('pnpm', ['install'], { cwd: holoDir, stdio: 'pipe' });
+    await execa('pnpm', ['install'], {
+      cwd: holoDir,
+      stdio: 'pipe',
+    });
     spin.stop('Holo project setup complete');
   } catch (error) {
     spin.stop('Failed to install dependencies');
@@ -53,7 +56,9 @@ export async function setupProject(dir?: string) {
  */
 async function ensurePnpmInstalled() {
   try {
-    await execa('npm', ['install', '-g', 'pnpm@9.0.0'], { stdio: 'pipe' });
+    await execa('corepack', ['prepare', 'pnpm@9.0.0', '--activate'], {
+      stdio: 'pipe',
+    });
     const response = await execa('pnpm', ['--version'], { stdio: 'pipe' });
     console.log(response);
   } catch (error) {
@@ -67,8 +72,8 @@ async function ensurePnpmInstalled() {
  * Gets the path to the .holo directory
  */
 export function getHoloPath(): string {
-  const homeDir = require('os').homedir();
-  return path.join(homeDir, '.holo');
+  const currentDir = process.cwd();
+  return path.join(currentDir, '.holo');
 }
 
 /**
