@@ -1,0 +1,49 @@
+{
+  "core": {
+    "url": "https://app.getcore.me",
+    "labels": [
+      "cmisk5dlc0002lp1qubw564bf"
+    ]
+  },
+  "providers": {
+    "name": "openai",
+    "model": "gpt-4.1-2025-04-14",
+    "baseUrl": "https://api.openai.com/v1"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction"
+      ]
+    },
+    {
+      "group": "Public",
+      "pages": [
+        "CORE cmisjnl80000z8o0i7mf8o9g8",
+        "CORE cmisjnl34000x8o0i81m0608f",
+        "CORE cmisjnkxa000v8o0ihequi1la",
+        "CORE cmisjnkrt000t8o0in2331z65",
+        "CORE cmisjnkkt000r8o0iwiheuyjf",
+        "CORE cmisjnkey000p8o0i9d4jk0on",
+        "CORE cmisjnkaj000n8o0ifw6xgjwd",
+        "CORE cmisjnk22000l8o0i0g6fwgs5",
+        "CORE cmisjnjxj000j8o0i2sp4l1xl",
+        "CORE cmisjnjsu000h8o0idvfi5auu",
+        "CORE cmisjnjok000f8o0i7ohdmwba",
+        "CORE cmisjnjjx000d8o0i8s21sdm7",
+        "CORE cmisjnjdb000b8o0idfbxn2kk",
+        "CORE cmisjnj6300098o0icljgep62",
+        "CORE cmisjnj1g00078o0iy377ubmh",
+        "CORE cmisjnivz00058o0iu4c231my",
+        "CORE cmisjnirc00038o0ir932l8vf",
+        "CORE cmisjnigo00018o0iowbrwjmb",
+        "CORE cmi4xz0da000xcq0iqvjzsf9y",
+        "CORE cmi4xz08i000vcq0izuk1iiyc",
+        "CORE cmi4xz03g000tcq0i20t4fkfj",
+        "CORE cmi4xyzzd000rcq0ilfd3w3y9"
+      ]
+    }
+  ],
+  "name": "Paul graham"
+}
