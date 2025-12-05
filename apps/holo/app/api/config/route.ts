@@ -50,9 +50,7 @@ export async function GET(req: NextRequest) {
       const episodeBody = await fetchCoreDocument(logId.replace('.mdx', ''));
 
       // Serialize the markdown content
-      const mdxSource = await serialize(episodeBody, {
-        parseFrontmatter: true,
-      });
+      const mdxSource = await serialize(episodeBody);
 
       return NextResponse.json(mdxSource);
     }

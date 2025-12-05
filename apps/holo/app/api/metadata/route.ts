@@ -23,15 +23,10 @@ async function fetchCoreDocumentMetadata(
     }
 
     const data = await response.json();
-    const episodeBody = data.log.data.episodeBody;
-
-    // Parse frontmatter from the episode body
-    const { data: frontmatter } = matter(episodeBody);
 
     return {
-      title: frontmatter.title || data.log.title || 'Untitled',
-      description: frontmatter.description || '',
-      ...frontmatter,
+      title: data.log.title || 'Untitled',
+      description: undefined,
     };
   } catch (error) {
     console.error(`Error fetching CORE document metadata for ${logId}:`, error);
@@ -82,7 +77,7 @@ async function fetchAllMetadata() {
           for (const page of group.pages) {
             // Check if this is a CORE document
             const coreMatch = page.match(/^CORE\s+(.+)$/);
-            console.log(coreMatch);
+
             if (coreMatch && coreUrl && coreApiKey) {
               const logId = coreMatch[1];
               metadataMap[page] = await fetchCoreDocumentMetadata(

@@ -26,31 +26,6 @@ import { HoloConfigContext } from '@/components/config-provider';
 
 import { HoloConfig } from '@/types/schema';
 
-// Hook to fetch metadata for all pages
-function usePageMetadata() {
-  const [metadata, setMetadata] = React.useState<Record<string, any>>({});
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    async function fetchMetadata() {
-      try {
-        const response = await fetch('/api/metadata');
-        if (response.ok) {
-          const data = await response.json();
-          setMetadata(data);
-        }
-      } catch (error) {
-        console.error('Error fetching metadata:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMetadata();
-  }, []);
-
-  return { metadata, loading };
-}
 
 function buildSocials(config: HoloConfig) {
   return config.footer?.socials
@@ -98,7 +73,6 @@ function buildSocials(config: HoloConfig) {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const holoConfig = React.useContext(HoloConfigContext) as HoloConfig;
   const pathname = usePathname();
-  const { metadata } = usePageMetadata();
 
   // Decode pathname to handle URL-encoded characters (e.g., %20 for spaces)
   const decodedPathname = decodeURIComponent(pathname);
@@ -107,15 +81,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navGroups =
     holoConfig.navigation?.map((group) => ({
       label: group.group,
+      pages: group.pages,
       items: group.pages.map((page) => {
         const pageName = page.split('/').pop() || page;
         const itemUrl = `/${page}`;
 
-        // Get metadata for this page
-        const pageMetadata = metadata[page];
-        const title =
-          pageMetadata?.title ||
-          pageName.charAt(0).toUpperCase() + pageName.slice(1);
+        // Use fallback title - NavMain will fetch actual metadata
+        const title = pageName.charAt(0).toUpperCase() + pageName.slice(1);
 
         return {
           title,
@@ -147,7 +119,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         {navGroups.map((group) => (
-          <NavMain key={group.label} label={group.label} items={group.items} />
+          <NavMain
+            key={group.label}
+            label={group.label}
+            items={group.items}
+            pageNames={group.pages}
+          />
         ))}
       </SidebarContent>
       {socials.length > 0 && (

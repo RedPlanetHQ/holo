@@ -17,7 +17,7 @@ export function configureDevCommand(program: Command) {
     .action(async (options) => {
       checkHoloJson(); // Check for holo.json before proceeding
       checkEnvVariables(getRequiredEnvVars()); // Check for required .env variables
-      await printInitialBanner(false);
+      await printInitialBanner(true);
       await ensureProjectSetup(); // Ensure project is set up before running
       currentProcess = await runDev();
       watchFiles(currentProcess);

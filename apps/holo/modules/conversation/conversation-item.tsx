@@ -29,7 +29,6 @@ function getMessage(message: string) {
 
 const Tool = ({ part }: { part: ToolUIPart<any> }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const textPart = part.output?.content ? part.output?.content[0]?.text : '';
 
   return (
     <Collapsible
@@ -45,24 +44,8 @@ const Tool = ({ part }: { part: ToolUIPart<any> }) => {
           className="flex justify-between gap-4 px-2 py-2"
         >
           <div className="flex items-center gap-2">Harshith is thinking...</div>
-
-          <ChevronsUpDown size={16} />
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="flex flex-col gap-2">
-          <div className="bg-grayAlpha-50 rounded p-2">
-            <p className="text-muted-foreground text-sm"> Request </p>
-            <p className="mt-2 font-mono text-[#BF4594]">
-              {JSON.stringify(part.input, null, 2)}
-            </p>
-          </div>
-          <div className="bg-grayAlpha-50 mb-2 rounded p-2">
-            <p className="text-muted-foreground text-sm"> Response </p>
-            <p className="mt-2 font-mono text-[#BF4594]">{textPart}</p>
-          </div>
-        </div>
-      </CollapsibleContent>
     </Collapsible>
   );
 };
