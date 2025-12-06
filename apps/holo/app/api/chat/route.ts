@@ -60,27 +60,27 @@ const SearchParamsSchema = z.object({
     .string()
     .describe(
       'Search query optimized for knowledge graph retrieval. Choose the right query structure based on your search intent:\n\n' +
-        '1. **Entity-Centric Queries** (Best for graph search):\n' +
-        '   - ✅ GOOD: "User\'s preferences for code style and formatting"\n' +
-        '   - ✅ GOOD: "Project authentication implementation decisions"\n' +
-        '   - ❌ BAD: "user code style"\n' +
-        '   - Format: [Person/Project] + [relationship/attribute] + [context]\n\n' +
-        '2. **Multi-Entity Relationship Queries** (Excellent for episode graph):\n' +
-        '   - ✅ GOOD: "User and team discussions about API design patterns"\n' +
-        '   - ✅ GOOD: "relationship between database schema and performance optimization"\n' +
-        '   - ❌ BAD: "user team api design"\n' +
-        '   - Format: [Entity1] + [relationship type] + [Entity2] + [context]\n\n' +
-        '3. **Semantic Question Queries** (Good for vector search):\n' +
-        '   - ✅ GOOD: "What causes authentication errors in production? What are the security requirements?"\n' +
-        '   - ✅ GOOD: "How does caching improve API response times compared to direct database queries?"\n' +
-        '   - ❌ BAD: "auth errors production"\n' +
-        '   - Format: Complete natural questions with full context\n\n' +
-        '4. **Concept Exploration Queries** (Good for BFS traversal):\n' +
-        '   - ✅ GOOD: "concepts and ideas related to database indexing and query optimization"\n' +
-        '   - ✅ GOOD: "topics connected to user authentication and session management"\n' +
-        '   - ❌ BAD: "database indexing concepts"\n' +
-        '   - Format: [concept] + related/connected + [domain/context]\n\n' +
-        'Avoid keyword soup queries - use complete phrases with proper context for best results.',
+      '1. **Entity-Centric Queries** (Best for graph search):\n' +
+      '   - ✅ GOOD: "User\'s preferences for code style and formatting"\n' +
+      '   - ✅ GOOD: "Project authentication implementation decisions"\n' +
+      '   - ❌ BAD: "user code style"\n' +
+      '   - Format: [Person/Project] + [relationship/attribute] + [context]\n\n' +
+      '2. **Multi-Entity Relationship Queries** (Excellent for episode graph):\n' +
+      '   - ✅ GOOD: "User and team discussions about API design patterns"\n' +
+      '   - ✅ GOOD: "relationship between database schema and performance optimization"\n' +
+      '   - ❌ BAD: "user team api design"\n' +
+      '   - Format: [Entity1] + [relationship type] + [Entity2] + [context]\n\n' +
+      '3. **Semantic Question Queries** (Good for vector search):\n' +
+      '   - ✅ GOOD: "What causes authentication errors in production? What are the security requirements?"\n' +
+      '   - ✅ GOOD: "How does caching improve API response times compared to direct database queries?"\n' +
+      '   - ❌ BAD: "auth errors production"\n' +
+      '   - Format: Complete natural questions with full context\n\n' +
+      '4. **Concept Exploration Queries** (Good for BFS traversal):\n' +
+      '   - ✅ GOOD: "concepts and ideas related to database indexing and query optimization"\n' +
+      '   - ✅ GOOD: "topics connected to user authentication and session management"\n' +
+      '   - ❌ BAD: "database indexing concepts"\n' +
+      '   - Format: [concept] + related/connected + [domain/context]\n\n' +
+      'Avoid keyword soup queries - use complete phrases with proper context for best results.',
     ),
   validAt: z
     .string()
@@ -93,24 +93,24 @@ const SearchParamsSchema = z.object({
     .optional()
     .describe(
       "Optional: ISO timestamp (like '2024-01-01T00:00:00Z'). Only find memories created AFTER this time. " +
-        "USE WHEN: User asks for 'recent', 'this week', 'last month', 'since X date' queries. " +
-        'EXAMPLES: ' +
-        "- 'recent work' → set startTime to 7 days ago; " +
-        "- 'this week' → set startTime to start of current week; " +
-        "- 'since January' → set startTime to '2025-01-01T00:00:00Z'. " +
-        "IMPORTANT: Calculate relative dates from today's date (see system context). Combine with sortBy='recency' for chronological timeline.",
+      "USE WHEN: User asks for 'recent', 'this week', 'last month', 'since X date' queries. " +
+      'EXAMPLES: ' +
+      "- 'recent work' → set startTime to 7 days ago; " +
+      "- 'this week' → set startTime to start of current week; " +
+      "- 'since January' → set startTime to '2025-01-01T00:00:00Z'. " +
+      "IMPORTANT: Calculate relative dates from today's date (see system context). Combine with sortBy='recency' for chronological timeline.",
     ),
   endTime: z
     .string()
     .optional()
     .describe(
       "Optional: ISO timestamp (like '2024-12-31T23:59:59Z'). Only find memories created BEFORE this time. " +
-        "USE WHEN: User asks for historical queries like 'before X date', 'until last month', or specific time ranges. " +
-        'EXAMPLES: ' +
-        "- 'work from last month' → set startTime to first day of last month, endTime to last day of last month; " +
-        "- 'before March' → set endTime to '2025-03-01T00:00:00Z'; " +
-        "- 'between Jan and Mar' → set startTime='2025-01-01T00:00:00Z', endTime='2025-03-31T23:59:59Z'. " +
-        'IMPORTANT: Use with startTime to define time windows. Always use ISO format with timezone (Z for UTC).',
+      "USE WHEN: User asks for historical queries like 'before X date', 'until last month', or specific time ranges. " +
+      'EXAMPLES: ' +
+      "- 'work from last month' → set startTime to first day of last month, endTime to last day of last month; " +
+      "- 'before March' → set endTime to '2025-03-01T00:00:00Z'; " +
+      "- 'between Jan and Mar' → set startTime='2025-01-01T00:00:00Z', endTime='2025-03-31T23:59:59Z'. " +
+      'IMPORTANT: Use with startTime to define time windows. Always use ISO format with timezone (Z for UTC).',
     ),
   labelIds: z
     .array(z.string())
@@ -147,7 +147,7 @@ export async function POST(req: Request) {
   const tools = {
     search: tool({
       description:
-        "Search stored memories for past conversations, user preferences, project context, and decisions. USE THIS TOOL: 1) At start of every conversation to find related context, 2) When user mentions past work or projects, 3) Before answering questions that might have previous context. HOW TO USE: Write a simple query describing what to find (e.g., 'user code preferences', 'authentication bugs', 'API setup steps'). Returns: Markdown-formatted context optimized for LLM consumption, including session compacts, episodes, and key facts with temporal metadata.",
+        "CRITICAL: You MUST use this tool before responding to ANY question about yourself, your experiences, work, opinions, or past. This searches YOUR knowledge graph - your actual memories, blog posts, projects, and conversations. ALWAYS search first with a relevant query before answering questions. Example queries: 'my experience with React', 'projects I built in 2024', 'my thoughts on AI', 'what I wrote about databases'. Returns your authentic memories and writings in markdown format.",
       inputSchema: SearchParamsSchema,
       execute: async (
         params: z.infer<typeof SearchParamsSchema>,
@@ -168,7 +168,9 @@ export async function POST(req: Request) {
           return 'No memory found';
         }
 
-        return await response.json();
+        const result = await response.json();
+
+        return result;
       },
     }),
   };
