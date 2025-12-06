@@ -1,18 +1,15 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 
-import { useEffect, memo, useState } from 'react';
+import { useEffect, memo } from 'react';
 
-import { type ToolUIPart, type UIMessage } from 'ai';
+import { type UIMessage } from 'ai';
 
-import { ChevronsUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn, titleCase } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { extensionsForConversation } from './editor-extensions';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import React from 'react';
+import { HoloConfigContext } from '@/components/config-provider';
+import { HoloConfig } from '@/types/schema';
 
 interface AIConversationItemProps {
   message: UIMessage;
@@ -27,26 +24,21 @@ function getMessage(message: string) {
   return finalMessage;
 }
 
-const Tool = ({ part }: { part: ToolUIPart<any> }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Tool = () => {
+  const holoConfig = React.useContext(HoloConfigContext) as HoloConfig;
 
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      className="my-1 mb-2 rounded border-1 border-border px-2"
+    <Button
+      variant="link"
+      full
+      size="xl"
+      className="flex justify-between gap-4 text-muted-foreground px-0 py-2"
     >
-      <CollapsibleTrigger asChild>
-        <Button
-          variant="link"
-          full
-          size="xl"
-          className="flex justify-between gap-4 px-2 py-2"
-        >
-          <div className="flex items-center gap-2">Harshith is thinking...</div>
-        </Button>
-      </CollapsibleTrigger>
-    </Collapsible>
+      <div className="flex items-center gap-2">
+        {' '}
+        {holoConfig.name} is thinking...
+      </div>
+    </Button>
   );
 };
 
@@ -73,7 +65,7 @@ const ConversationItemComponent = ({ message }: AIConversationItemProps) => {
 
   const getComponent = (part: any) => {
     if (part.type.includes('tool-')) {
-      return <Tool part={part as any} />;
+      return <Tool />;
     }
 
     if (part.type.includes('text')) {
