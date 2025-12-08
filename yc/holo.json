@@ -1,0 +1,51 @@
+{
+  "core": {
+    "url": "https://app.getcore.me",
+    "labels": [
+      "cmiskb0o50001n01ppfp0uygd"
+    ]
+  },
+  "providers": {
+    "name": "openai",
+    "model": "gpt-4.1-2025-04-14",
+    "baseUrl": "https://api.openai.com/v1"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction"
+      ]
+    },
+    {
+      "group": "Public",
+      "pages": [
+        "CORE cmisk57gm000vge0ir9ega7sw",
+        "CORE cmisk57bh000tge0i8zqfgga5",
+        "CORE cmisk56z5000rge0iexaqueu0",
+        "CORE cmisk56si000pge0i1re1kke1",
+        "CORE cmisk56nc000nge0iysp6xurq",
+        "CORE cmisk56hd000lge0ivjxcekem",
+        "CORE cmisk569g000jge0icvv2icg6",
+        "CORE cmisk563r000hge0i9km6l6vi",
+        "CORE cmisk55zk000fge0i2aegjn7t",
+        "CORE cmisk55ul000dge0iikjtdrgi",
+        "CORE cmisk55py000bge0iu7y67le2",
+        "CORE cmisk55kh0009ge0iag9s864f",
+        "CORE cmisk55f80007ge0ih2di031m",
+        "CORE cmisk559w0005ge0i0h2r1xf9",
+        "CORE cmisk555i0003ge0i32ypsafp",
+        "CORE cmisk54x50001ge0i6ot0bac4"
+      ]
+    }
+  ],
+  "name": "YCombinator",
+  "description": "Ask questions about startup funding, the YC program, accelerators, and building companies.",
+  "image": "pg.webp",
+  "footer": {
+    "socials": {
+      "twitter": "https://x.com/ycombinator",
+      "website": "https://www.ycombinator.com"
+    }
+  }
+}

@@ -12,3 +12,6 @@
 .env
 
 AGENTS.md
+
+.clinerules/
+.cursor/
