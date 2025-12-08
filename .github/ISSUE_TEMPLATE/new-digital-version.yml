@@ -1,0 +1,63 @@
+name: New Digital Version
+description: Request a new digital personality to be added to the collection
+title: "[New Personality]: "
+labels: ["enhancement", "new-personality"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new digital personality! Please provide as much detail as possible to help us evaluate and create this personality.
+
+  - type: input
+    id: personality-name
+    attributes:
+      label: Personality Name
+      description: Who is the person or entity you'd like to see as a digital personality?
+      placeholder: e.g., Steve Jobs, Naval Ravikant, Elon Musk
+    validations:
+      required: true
+
+  - type: textarea
+    id: personality-description
+    attributes:
+      label: Brief Description
+      description: Tell us a bit about this personality and why they would be a good addition
+      placeholder: Describe their background, areas of expertise, and why people would want to chat with their digital version
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: available-sources
+    attributes:
+      label: Available Sources
+      description: What types of content are available for this personality? (Check all that apply)
+      options:
+        - label: Books
+        - label: Essays/Articles
+        - label: Interviews
+        - label: Podcasts
+        - label: Videos/Talks
+        - label: Social Media Posts (Twitter, LinkedIn, etc.)
+        - label: Academic Papers
+        - label: Blog Posts
+        - label: Other (specify in Additional Context below)
+
+  - type: textarea
+    id: source-links
+    attributes:
+      label: Links to Sources
+      description: Please provide links to the available sources (websites, book references, YouTube channels, etc.)
+      placeholder: |
+        - Books: https://example.com/book
+        - Essays: https://example.com/essays
+        - Interviews: https://youtube.com/@example
+        - etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that would be helpful for creating this digital personality
+      placeholder: Special considerations, notable characteristics, specific topics they're known for, etc.

@@ -9,6 +9,10 @@ We currently have two personalities:
 - **Paul Graham** - [pg.getcore.me](https://pg.getcore.me)
 - **Y Combinator** - [yc.getcore.me](https://yc.getcore.me)
 
+## Want a New Personality?
+
+If you'd like to request a new digital personality, please [create an issue](../../issues/new/choose) using the "New Digital Version" template.
+
 ## Structure
 
 ```
