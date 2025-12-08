@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "ai-client",
+  "version": "1.0.0",
+  "description": "AI Client",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^1.0.24",
+    "@anthropic-ai/tokenizer": "^0.0.4",
+    "ai": "^5.0.82",
+    "undici": "^7.16.0",
+    "xdg-basedir": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

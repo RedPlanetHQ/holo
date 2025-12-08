@@ -1,0 +1,40 @@
+
+> @redplanethq/holo@0.5.1 build /Users/harshithmullapudi/Documents/holo/packages/cli
+> pnpm run clean && pnpm run build:main
+
+
+> @redplanethq/holo@0.5.1 clean /Users/harshithmullapudi/Documents/holo/packages/cli
+> rimraf dist
+
+
+> @redplanethq/holo@0.5.1 build:main /Users/harshithmullapudi/Documents/holo/packages/cli
+> tsup
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.1
+[34mCLI[39m Using tsup config: /Users/harshithmullapudi/Documents/holo/packages/cli/tsup.config.ts
+[34mCLI[39m Target: esnext
+[34mCJS[39m Build start
+[34mESM[39m Build start
+
+[43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1m"import.meta" is not available with the "cjs" output format and will be empty[0m [empty-import-meta]                                                                                                                                                                                               [90m1:38:37 pm[39m
+
+    src/consts.ts:6:33:
+[37m      6 │ const __filename = fileURLToPath([32mimport.meta[37m.url);
+        ╵                                  [32m~~~~~~~~~~~[0m
+
+  You need to set the output format to "esm" for "import.meta" to work correctly.
+
+
+
+[32mESM[39m [1mdist/index.js     [22m[32m972.69 KB[39m
+[32mESM[39m [1mdist/index.js.map [22m[32m1.66 MB[39m
+[32mESM[39m ⚡️ Build success in 146ms
+[32mCJS[39m [1mdist/index.cjs     [22m[32m976.36 KB[39m
+[32mCJS[39m [1mdist/index.cjs.map [22m[32m1.66 MB[39m
+[32mCJS[39m ⚡️ Build success in 146ms
+DTS Build start
+DTS ⚡️ Build success in 837ms
+DTS dist/index.d.cts 20.00 B
+DTS dist/index.d.ts  20.00 B

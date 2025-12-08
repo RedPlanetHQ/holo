@@ -15,3 +15,5 @@ AGENTS.md
 
 .clinerules/
 .cursor/
+
+node_modules/

@@ -2,7 +2,7 @@
 
 # Holo Personalities
 
-This is a quick way to generate holos using [HOLO](https://github.com/replanethq/holo) and [CORE](https://github.com/redplanethq/core). We built a minimal MDX generator using which you can generate your holo in 5 minutes, where people can chat with your digital version.
+This is a quick way to generate holos using [CORE](https://github.com/redplanethq/core). We built a minimal MDX generator using which you can generate your holo in 5 minutes, where people can chat with your digital version.
 
 ## Available Personalities
 
@@ -19,8 +19,8 @@ If you'd like to request a new digital personality, please [create an issue](../
 
 ```
 .
-├── pg/          # Paul Graham personality
-└── yc/          # Y Combinator personality
+├── holos/pg/          # Paul Graham personality
+└── holos/yc/          # Y Combinator personality
 ```
 
 ## Getting Started
@@ -32,8 +32,8 @@ Each personality directory contains:
 - Image assets for the personality
 
 See individual README files in each directory for more details:
-- [Paul Graham (pg) README](./pg/README.md)
-- [Y Combinator (yc) README](./yc/README.md)
+- [Paul Graham (pg) README](./holos/pg/README.md)
+- [Y Combinator (yc) README](./holos/yc/README.md)
 
 ## Disclaimer
 
@@ -41,5 +41,4 @@ See individual README files in each directory for more details:
 
 ## Technologies
 
-- [HOLO](https://github.com/replanethq/holo) - Framework for creating interactive digital personalities
 - [CORE](https://github.com/redplanethq/core) - Document generation and knowledge base system
