@@ -1,3 +1,5 @@
+<img width="1344" height="768" alt="Gemini_Generated_Image_t088z9t088z9t088" src="https://github.com/user-attachments/assets/e3a98b9e-8cdb-4b28-8ee4-1b1664bced88" />
+
 # Holo Personalities
 
 This is a quick way to generate holos using [HOLO](https://github.com/replanethq/holo) and [CORE](https://github.com/redplanethq/core). We built a minimal MDX generator using which you can generate your holo in 5 minutes, where people can chat with your digital version.
