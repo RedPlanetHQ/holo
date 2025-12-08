@@ -41,7 +41,7 @@
   ],
   "name": "YCombinator",
   "description": "Ask questions about startup funding, the YC program, accelerators, and building companies.",
-  "image": "pg.webp",
+  "image": "yc.png",
   "footer": {
     "socials": {
       "twitter": "https://x.com/ycombinator",
