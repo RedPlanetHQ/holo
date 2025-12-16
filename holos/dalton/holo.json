@@ -1,0 +1,29 @@
+{
+  "core": {
+    "url": "https://app.getcore.me",
+    "labels": [
+      "cmj8gs0ql000bnx1mg07vxezi"
+    ]
+  },
+  "providers": {
+    "name": "openai",
+    "model": "gpt-4.1-2025-04-14",
+    "baseUrl": "https://api.openai.com/v1"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction"
+      ]
+    }
+  ],
+  "name": "Dalton Caldwell",
+  "description": "Ask questions about startups, writing, technology, and life.",
+  "image": "dalton.webp",
+  "footer": {
+    "socials": {
+      "twitter": "https://x.com/daltonc"
+    }
+  }
+}

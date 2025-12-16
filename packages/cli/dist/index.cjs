@@ -22721,7 +22721,8 @@ var FooterSocialsSchema = import_zod2.z.object({
   twitter: import_zod2.z.string().url("Twitter URL must be a valid URL").optional(),
   linkedin: import_zod2.z.string().url("LinkedIn URL must be a valid URL").optional(),
   github: import_zod2.z.string().url("GitHub URL must be a valid URL").optional(),
-  discord: import_zod2.z.string().url("Discord URL must be a valid URL").optional()
+  discord: import_zod2.z.string().url("Discord URL must be a valid URL").optional(),
+  website: import_zod2.z.string().url("Website URL must be a valid URL").optional()
 }).optional();
 var FooterSchema = import_zod2.z.object({
   socials: FooterSocialsSchema
@@ -22910,6 +22911,14 @@ async function promptProviderApiKey(providerName) {
 function saveHoloConfig(coreUrl, selectedLabels, providerConfig, existingConfig, labelsData, documentsData) {
   const holoJsonPath = import_node_path2.default.join(process.cwd(), "holo.json");
   const navigation = [];
+  const previousLabelIds = existingConfig.core?.labels || [];
+  const newlyAddedLabelIds = selectedLabels.filter(
+    (id) => !previousLabelIds.includes(id)
+  );
+  const removedLabelIds = previousLabelIds.filter(
+    (id) => !selectedLabels.includes(id)
+  );
+  const removedLabelNames = removedLabelIds.map((id) => labelsData.find((l) => l.id === id)?.name).filter(Boolean);
   if (existingConfig.navigation) {
     existingConfig.navigation.forEach((group) => {
       const isCoreGroup = group.pages?.some(
@@ -22917,6 +22926,13 @@ function saveHoloConfig(coreUrl, selectedLabels, providerConfig, existingConfig,
       );
       if (!isCoreGroup) {
         navigation.push(group);
+      } else if (isCoreGroup && !removedLabelNames.includes(group.group)) {
+        const labelForGroup = labelsData.find((l) => l.name === group.group);
+        if (labelForGroup && selectedLabels.includes(labelForGroup.id)) {
+          if (!newlyAddedLabelIds.includes(labelForGroup.id)) {
+            navigation.push(group);
+          }
+        }
       }
     });
   }
@@ -22930,19 +22946,27 @@ function saveHoloConfig(coreUrl, selectedLabels, providerConfig, existingConfig,
     const label = labelsData.find((l) => l.id === labelId);
     const documents = documentsData.get(labelId) || [];
     if (label && documents.length > 0) {
-      navigation.push({
-        group: label.name,
-        pages: documents.map((doc) => `CORE ${doc.id}`)
-      });
+      const existingGroupIndex = navigation.findIndex(
+        (g) => g.group === label.name
+      );
+      if (newlyAddedLabelIds.includes(labelId) || existingGroupIndex === -1) {
+        navigation.push({
+          group: label.name,
+          pages: documents.map((doc) => `CORE ${doc.id}`)
+        });
+      }
     }
   });
+  const coreConfig = {
+    url: coreUrl
+  };
+  if (selectedLabels.length > 0) {
+    coreConfig.labels = selectedLabels;
+  }
   const holoConfig = {
     ...existingConfig,
     // Preserve all existing fields
-    core: {
-      url: coreUrl,
-      labels: selectedLabels
-    },
+    core: coreConfig,
     providers: {
       name: providerConfig.name,
       model: providerConfig.model,

@@ -15,7 +15,7 @@ export function NavSecondary({
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <div className="flex flex-col gap-2">
-      <SidebarMenu className="flex gap-1">
+      <SidebarMenu className="flex gap-1 flex-row">
         {items.map((item) => (
           <a href={item.url} target="_blank">
             <Button className="" variant="ghost">

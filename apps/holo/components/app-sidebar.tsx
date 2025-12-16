@@ -8,6 +8,7 @@ import {
   Linkedin,
   MessageCircle,
   X,
+  Globe,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -65,6 +66,15 @@ function buildSocials(config: HoloConfig) {
                 title: 'Discord',
                 url: config.footer.socials.discord,
                 icon: MessageCircle,
+              },
+            ]
+          : []),
+        ...(config.footer.socials.website
+          ? [
+              {
+                title: 'Website',
+                url: config.footer.socials.website,
+                icon: Globe,
               },
             ]
           : []),
@@ -155,11 +165,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <X size={14} />
                 </Button>
                 <p>
-                  ⚠️ <strong>Disclaimer:</strong> This is a digital representation
-                  of {holoConfig.name}'s knowledge. The information provided may
-                  sometimes be incomplete or inaccurate. Neither CORE nor{' '}
-                  {holoConfig.name} is responsible for any errors or omissions in
-                  this content.
+                  ⚠️ <strong>Disclaimer:</strong> This is a digital
+                  representation of {holoConfig.name}'s knowledge. The
+                  information provided may sometimes be incomplete or
+                  inaccurate. Neither CORE nor {holoConfig.name} is responsible
+                  for any errors or omissions in this content.
                 </p>
               </CardContent>
             </Card>

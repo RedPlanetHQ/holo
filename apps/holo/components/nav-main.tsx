@@ -142,7 +142,7 @@ function NavItem({
       >
         <Link href={item.url} className="max-w-[100%] h-[28px]">
           <item.icon />
-          <span className="truncate">{displayTitle}</span>
+          <span className="truncate capitalize">{displayTitle}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

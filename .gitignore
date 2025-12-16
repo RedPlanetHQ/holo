@@ -17,3 +17,7 @@ AGENTS.md
 .cursor/
 
 node_modules/
+
+CLAUDE.md
+
+.turbo/

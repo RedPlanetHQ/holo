@@ -295,14 +295,44 @@ export function saveHoloConfig(
   // Build navigation from documents
   const navigation: any[] = [];
 
-  // Add existing navigation groups that are not CORE-related
+  // Get previously selected label IDs
+  const previousLabelIds = existingConfig.core?.labels || [];
+
+  // Find newly added labels and removed labels
+  const newlyAddedLabelIds = selectedLabels.filter(
+    (id) => !previousLabelIds.includes(id),
+  );
+  const removedLabelIds = previousLabelIds.filter(
+    (id) => !selectedLabels.includes(id),
+  );
+
+  // Get label names for removed labels to filter out their navigation groups
+  const removedLabelNames = removedLabelIds
+    .map((id) => labelsData.find((l) => l.id === id)?.name)
+    .filter(Boolean);
+
+  // Add existing navigation groups that should be kept
   if (existingConfig.navigation) {
     existingConfig.navigation.forEach((group) => {
       const isCoreGroup = group.pages?.some((page: string) =>
         page.startsWith('CORE '),
       );
+
+      // Keep non-CORE groups
       if (!isCoreGroup) {
         navigation.push(group);
+      }
+      // Keep CORE groups that are not removed labels
+      else if (isCoreGroup && !removedLabelNames.includes(group.group)) {
+        // Check if this label is in selectedLabels
+        const labelForGroup = labelsData.find((l) => l.name === group.group);
+        if (labelForGroup && selectedLabels.includes(labelForGroup.id)) {
+          // This is an existing label group that should be kept as-is
+          // unless it's a newly added label
+          if (!newlyAddedLabelIds.includes(labelForGroup.id)) {
+            navigation.push(group);
+          }
+        }
       }
     });
   }
@@ -315,25 +345,42 @@ export function saveHoloConfig(
     });
   }
 
-  // Add CORE document groups
+  // Add CORE document groups for newly added labels or labels without navigation
   selectedLabels.forEach((labelId) => {
     const label = labelsData.find((l) => l.id === labelId);
     const documents = documentsData.get(labelId) || [];
 
     if (label && documents.length > 0) {
-      navigation.push({
-        group: label.name,
-        pages: documents.map((doc) => `CORE ${doc.id}`),
-      });
+      // Check if this label's navigation group already exists
+      const existingGroupIndex = navigation.findIndex(
+        (g) => g.group === label.name,
+      );
+
+      // If newly added or doesn't exist in navigation, add it
+      if (
+        newlyAddedLabelIds.includes(labelId) ||
+        existingGroupIndex === -1
+      ) {
+        navigation.push({
+          group: label.name,
+          pages: documents.map((doc) => `CORE ${doc.id}`),
+        });
+      }
     }
   });
 
+  // Build core config - only include labels if there are any selected
+  const coreConfig: any = {
+    url: coreUrl,
+  };
+
+  if (selectedLabels.length > 0) {
+    coreConfig.labels = selectedLabels;
+  }
+
   const holoConfig = {
     ...existingConfig, // Preserve all existing fields
-    core: {
-      url: coreUrl,
-      labels: selectedLabels,
-    },
+    core: coreConfig,
     providers: {
       name: providerConfig.name,
       model: providerConfig.model,

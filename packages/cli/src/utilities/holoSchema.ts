@@ -54,6 +54,7 @@ const FooterSocialsSchema = z
     linkedin: z.string().url('LinkedIn URL must be a valid URL').optional(),
     github: z.string().url('GitHub URL must be a valid URL').optional(),
     discord: z.string().url('Discord URL must be a valid URL').optional(),
+    website: z.string().url('Website URL must be a valid URL').optional(),
   })
   .optional();
 

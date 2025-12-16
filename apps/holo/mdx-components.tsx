@@ -35,16 +35,31 @@ export const customComponents = {
     <p className="mb-4 leading-relaxed" {...props} />
   ),
   ul: (props: ComponentProps) => (
-    <ul className="list-disc list-outside pl-8 mb-4 space-y-2" style={{ display: 'block' }} {...props} />
+    <ul
+      className="list-disc list-outside pl-8 mb-4 space-y-2"
+      style={{ display: 'block' }}
+      {...props}
+    />
   ),
   ol: (props: ComponentProps) => (
-    <ol className="list-decimal list-outside pl-8 mb-4 space-y-2" style={{ display: 'block' }} {...props} />
+    <ol
+      className="list-decimal list-outside pl-8 mb-4 space-y-2"
+      style={{ display: 'block' }}
+      {...props}
+    />
   ),
   li: (props: ComponentProps) => (
-    <li className="leading-relaxed ml-0" style={{ display: 'list-item' }} {...props} />
+    <li
+      className="leading-relaxed ml-0"
+      style={{ display: 'list-item' }}
+      {...props}
+    />
   ),
   a: (props: any) => (
-    <a className="border-none text-primary hover:underline rounded" {...props} />
+    <a
+      className="border-none text-primary hover:underline rounded"
+      {...props}
+    />
   ),
   blockquote: (props: ComponentProps) => (
     <blockquote
@@ -62,7 +77,9 @@ export const customComponents = {
     <pre className="bg-muted p-4 rounded-lg overflow-x-auto mb-4" {...props} />
   ),
   hr: (props: any) => <hr className="my-8 border-border" {...props} />,
-  strong: (props: ComponentProps) => <strong className="font-semibold" {...props} />,
+  strong: (props: ComponentProps) => (
+    <strong className="font-semibold" {...props} />
+  ),
   em: (props: ComponentProps) => <em className="italic" {...props} />,
 
   table: (props: ComponentProps) => <Table {...props} />,
@@ -71,6 +88,12 @@ export const customComponents = {
   td: (props: ComponentProps) => <TableCell {...props} />,
   th: (props: ComponentProps) => <TableHead {...props} />,
   tbody: (props: ComponentProps) => <TableBody {...props} />,
+  Link: (props: any) => (
+    <a
+      className="border-none text-primary hover:underline rounded"
+      {...props}
+    />
+  ),
 };
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
